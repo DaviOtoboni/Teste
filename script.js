@@ -1,21 +1,42 @@
-
 let slideIndex = 0;
 let slideTimeout;
-showSlides();
+const slides = document.getElementsByClassName("slide");
 
 function showSlides() {
-    let slides = document.getElementsByClassName("slide");
+    // Remove todas as classes anteriores e aplica hidden
     for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
+        slides[i].className = 'slide hidden';
     }
-    slideIndex++;
-    if (slideIndex > slides.length) { slideIndex = 1; }
-    slides[slideIndex - 1].style.display = "block";
+    
+    // Calcula os índices das três imagens visíveis
+    const prevIndex = (slideIndex - 1 + slides.length) % slides.length;
+    const currentIndex = slideIndex;
+    const nextIndex = (slideIndex + 1) % slides.length;
+    
+    // Aplica as classes para posicionar as imagens
+    slides[prevIndex].className = 'slide prev-slide sliding-to-left';
+    slides[currentIndex].className = 'slide current-slide sliding-center-from-right';
+    slides[nextIndex].className = 'slide next-slide sliding-left';
+    
+    // Remove as classes de animação após a transição
+    setTimeout(() => {
+        slides[prevIndex].className = 'slide prev-slide';
+        slides[currentIndex].className = 'slide current-slide';
+        slides[nextIndex].className = 'slide next-slide';
+    }, 600);
+    
+    // Reinicia o timeout
     clearTimeout(slideTimeout);
-    slideTimeout = setTimeout(showSlides, 6000); // Muda o slide a cada 6 segundos
+    slideTimeout = setTimeout(() => {
+        slideIndex = (slideIndex + 1) % slides.length;
+        showSlides();
+    }, 12000); // Muda o slide a cada 12 segundos
 }
 
 function plusSlides(n) {
-    slideIndex += n - 1; // Ajusta o índice para próximo ou anterior
-    showSlides(); // O showSlides já reinicia o timeout
+    slideIndex = (slideIndex + n + slides.length) % slides.length;
+    showSlides();
 }
+
+// Inicializa o carrossel
+showSlides();
